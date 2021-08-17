@@ -6,7 +6,7 @@ std::unique_ptr<Game> buildGame(unsigned int randomSeed) {
 }
 
 namespace game_config {
-    static const Pos3d DIMENSIONS { 5, 4, 14 };
+    static const Pos3d DIMENSIONS { 10, 10, 14 };
     static const int DROP_SCORE_MULTIPLIER = 1;
     static const int REMOVAL_SCORE_MULTIPLIER = 20;
     static const int DROP_INTERVAL_MS = 1000;
