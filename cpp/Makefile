@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3  -fno-rtti -fno-exceptions -flto
+CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3 -fno-exceptions -flto
 
 _OBJ = game.o piece.o cemented-block-array.o game-box.o piece-generator.o
 OBJ = $(patsubst %,obj/%,$(_OBJ))
