@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3  -s FILESYSTEM=0 -DNDEBUG -s ASSERTIONS=0 -s SUPPORT_LONGJMP=0 -fno-rtti -fno-exceptions -flto --closure 1 -g0 -s USES_DYNAMIC_ALLOC=0 
+CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3  -fno-rtti -fno-exceptions -flto
 
 _OBJ = game.o piece.o cemented-block-array.o game-box.o piece-generator.o
 OBJ = $(patsubst %,obj/%,$(_OBJ))
