@@ -10,7 +10,7 @@ browser:
 	mkdir obj
 	cd obj
 	mkdir js
-	cd ..
+	cd ../..
 	bash -c "cd cpp && source ${EMCC_PATH} && make bin/js/game.js"
 	rm -rf browser/build/*
 	mkdir -p browser/build
