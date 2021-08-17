@@ -17,10 +17,8 @@
  */
 #ifndef C_AR_GLM_H_
 #define C_AR_GLM_H_
-
 #define GLM_FORCE_RADIANS 1
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
-
 #endif

@@ -20,22 +20,17 @@
 // scene.
 
 #include <type_traits>
-
 #include "background_renderer.h"
-
-namespace {
+namespace{
 // Positions of the quad vertices in clip space (X, Y, Z).
-const GLfloat kVertices[] = {
-    -1.0f, -1.0f, 0.0f, +1.0f, -1.0f, 0.0f,
-    -1.0f, +1.0f, 0.0f, +1.0f, +1.0f, 0.0f,
+const GLfloat kVertices[]={
+-1.0f,-1.0f,0.0f,+1.0f,-1.0f,0.0f,-1.0f,+1.0f,0.0f,+1.0f,+1.0f,0.0f,
 };
-
 // UVs of the quad vertices (S, T)
-const GLfloat kUvs[] = {
-    0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+const GLfloat kUvs[]={
+0.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,
 };
-
-constexpr char kVertexShader[] = R"(
+constexpr char kVertexShader[]=R"(
     attribute vec4 vertex;
     attribute vec2 textureCoords;
     varying vec2 v_textureCoords;
@@ -43,8 +38,7 @@ constexpr char kVertexShader[] = R"(
       v_textureCoords = textureCoords;
       gl_Position = vertex;
     })";
-
-constexpr char kFragmentShader[] = R"(
+constexpr char kFragmentShader[]=R"(
     #extension GL_OES_EGL_image_external : require
     precision mediump float;
     uniform samplerExternalOES texture;
@@ -54,66 +48,48 @@ constexpr char kFragmentShader[] = R"(
       vec4 color = texture2D(texture, v_textureCoords);
       gl_FragColor = vec4(color.xyz*brightness, 1.0);
     })";
-
 }  // namespace
 
-void BackgroundRenderer::InitializeGlContent() {
-  shader_program_ = util::CreateProgram(kVertexShader, kFragmentShader);
-
-  if (!shader_program_) {
-    LOGE("Could not create program.");
-  }
-
-  glGenTextures(1, &texture_id_);
-  glBindTexture(GL_TEXTURE_EXTERNAL_OES, texture_id_);
-  glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  uniform_texture_ = glGetUniformLocation(shader_program_, "texture");
-  uniform_brightness_ = glGetUniformLocation(shader_program_, "brightness");
-  attribute_vertices_ = glGetAttribLocation(shader_program_, "vertex");
-  attribute_uvs_ = glGetAttribLocation(shader_program_, "textureCoords");
+void BackgroundRenderer::InitializeGlContent(){
+shader_program_=util::CreateProgram(kVertexShader,kFragmentShader);
+if(!shader_program_){
+LOGE("Could not create program.");
 }
-
-void BackgroundRenderer::Draw(const ArSession* session, const ArFrame* frame, bool gameIsOn) {
-  static_assert(std::extent<decltype(kUvs)>::value == kNumVertices * 2,
-                "Incorrect kUvs length");
-  static_assert(std::extent<decltype(kVertices)>::value == kNumVertices * 3,
-                "Incorrect kVertices length");
-
-  // If display rotation changed (also includes view size change), we need to
-  // re-query the uv coordinates for the on-screen portion of the camera image.
-  int32_t geometry_changed = 0;
-  ArFrame_getDisplayGeometryChanged(session, frame, &geometry_changed);
-  if (geometry_changed != 0 || !uvs_initialized_) {
-    ArFrame_transformDisplayUvCoords(session, frame, kNumVertices * 2, kUvs,
-                                     transformed_uvs_);
-    uvs_initialized_ = true;
-  }
-
-  glUseProgram(shader_program_);
-  glDepthMask(GL_FALSE);
-
-  const float brightness = gameIsOn ? 1.0f : 0.4f;
-
-  glUniform1f(uniform_brightness_, brightness);
-  glUniform1i(uniform_texture_, 1);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_EXTERNAL_OES, texture_id_);
-
-  glEnableVertexAttribArray(attribute_vertices_);
-  glVertexAttribPointer(attribute_vertices_, 3, GL_FLOAT, GL_FALSE, 0,
-                        kVertices);
-
-  glEnableVertexAttribArray(attribute_uvs_);
-  glVertexAttribPointer(attribute_uvs_, 2, GL_FLOAT, GL_FALSE, 0,
-                        transformed_uvs_);
-
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-  glUseProgram(0);
-  glDepthMask(GL_TRUE);
-  util::CheckGlError("BackgroundRenderer::Draw() error");
+glGenTextures(1,&texture_id_);
+glBindTexture(GL_TEXTURE_EXTERNAL_OES,texture_id_);
+glTexParameteri(GL_TEXTURE_EXTERNAL_OES,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+glTexParameteri(GL_TEXTURE_EXTERNAL_OES,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+uniform_texture_=glGetUniformLocation(shader_program_,"texture");
+uniform_brightness_=glGetUniformLocation(shader_program_,"brightness");
+attribute_vertices_=glGetAttribLocation(shader_program_,"vertex");
+attribute_uvs_=glGetAttribLocation(shader_program_,"textureCoords");
 }
+void BackgroundRenderer::Draw(const ArSession *session,const ArFrame *frame,bool gameIsOn){
+static_assert(std::extent<decltype(kUvs)>::value == kNumVertices*2,"Incorrect kUvs length");
+static_assert(std::extent<decltype(kVertices)>::value == kNumVertices*3,"Incorrect kVertices length");
 
-GLuint BackgroundRenderer::GetTextureId() const { return texture_id_; }
+// If display rotation changed (also includes view size change), we need to
+// re-query the uv coordinates for the on-screen portion of the camera image.
+int32_t geometry_changed=0;
+ArFrame_getDisplayGeometryChanged(session,frame,&geometry_changed);
+if(geometry_changed != 0 || !uvs_initialized_){
+ArFrame_transformDisplayUvCoords(session,frame,kNumVertices*2,kUvs,transformed_uvs_);
+uvs_initialized_=true;
+}
+glUseProgram(shader_program_);
+glDepthMask(GL_FALSE);
+const float brightness=gameIsOn ? 1.0f :0.4f;
+glUniform1f(uniform_brightness_,brightness);
+glUniform1i(uniform_texture_,1);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_EXTERNAL_OES,texture_id_);
+glEnableVertexAttribArray(attribute_vertices_);
+glVertexAttribPointer(attribute_vertices_,3,GL_FLOAT,GL_FALSE,0,kVertices);
+glEnableVertexAttribArray(attribute_uvs_);
+glVertexAttribPointer(attribute_uvs_,2,GL_FLOAT,GL_FALSE,0,transformed_uvs_);
+glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+glUseProgram(0);
+glDepthMask(GL_TRUE);
+util::CheckGlError("BackgroundRenderer::Draw() error");
+}
+GLuint BackgroundRenderer::GetTextureId() const{return texture_id_;}

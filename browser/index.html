@@ -1,115 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>3D-tris</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <style>
-            body {
-                margin: 0px;
-                background-color: #000000;
-                overflow: hidden;
-                font-family: sans-serif;
-                color: white;
-            }
-            #help-text {
-                position: absolute;
-                width: 100%;
-                bottom: 10px;
-                text-align: center;
-                font-weight: normal;
-                user-select: none;
-            }
-            .score {
-                position: absolute;
-                top: 3%;
-                right: 3%;
-                text-align: right;
-                font-weight: normal;
-                font-size: 20pt;
-                text-shadow: 2px 2px 3px #000000;
-            }
-
-            #score {
-                font-weight: bold;
-            }
-
-            #game-over {
-                position: absolute;
-                /*right: 270px;*/
-                width: 100%;
-                top: 40%;
-                text-align: center;
-                font-size: 60pt;
-                color: white;
-                display: none;
-                /*background-color: rgba(0,0,0,0.5);
-                padding: 20px;
-                border-top: 1px solid black;
-                border-bottom: 1px solid black;*/
-                user-select: none;
-                text-shadow: 3px 3px 15px #000000;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="help-text">
-            Move with arrows or WASD, rotate with Q &amp; E (X-axis), 2 &amp; X (Y-axis) and R &amp; T (Z-axis), drop with SPACE
-        </div>
-        <div id="game-over">
-            Game over
-        </div>
-        <div class="score">
-            Score:
-            <span id="score">
+<head>
+<title>3D-tris</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<style>
+body{
+margin:0px;
+background-color:#000000;
+overflow:hidden;
+font-family:sans-serif;
+color:white;
+}
+#help-text{
+position:absolute;
+width:100%;
+bottom:10px;
+text-align:center;
+font-weight:normal;
+user-select:none;
+}
+.score{
+position:absolute;
+top:3%;
+right:3%;
+text-align:right;
+font-weight:normal;
+font-size:20pt;
+text-shadow:2px 2px 3px #000000;
+}
+#score{
+font-weight:bold;
+}
+#game-over{
+position:absolute;
+/*right: 270px;*/
+width:100%;
+top:40%;
+text-align:center;
+font-size:60pt;
+color:white;
+display:none;
+/*background-color: rgba(0,0,0,0.5);
+padding: 20px;
+border-top: 1px solid black;
+border-bottom: 1px solid black;*/
+user-select:none;
+text-shadow:3px 3px 15px #000000;
+}
+</style>
+</head>
+<body>
+<div id="help-text">
+Move with arrows or WASD, rotate with Q &amp; E (X-axis), 2 &amp; X (Y-axis) and R &amp; T (Z-axis), drop with SPACE
+</div>
+<div id="game-over">
+Game over
+</div>
+<div class="score">
+Score: <span id="score">
             </span>
-        </div>
+</div>
+<script id="ssao-vertex-shader" type="x-shader/x-vertex">
+varying vec3 vScreenNormal;
 
-        <script id="ssao-vertex-shader" type="x-shader/x-vertex">
-            varying vec3 vScreenNormal;
+void main() {
+vScreenNormal = normalMatrix * normal;
+gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+</script>
+<script id="compose-vertex-shader" type="x-shader/x-vertex">
+varying vec3 vNormal;
+varying vec3 vPosition;
 
-            void main() {
-                vScreenNormal = normalMatrix * normal;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-            }
-        </script>
-        <script id="compose-vertex-shader" type="x-shader/x-vertex">
-            varying vec3 vNormal;
-            varying vec3 vPosition;
+uniform mat4 cameraMatrix;
 
-            uniform mat4 cameraMatrix;
+void main() {
+vPosition = (cameraMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
+vNormal = normal;
+gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+</script>
+<script id="flat-vertex-shader" type="x-shader/x-vertex">
+varying vec2 vUv;
 
-            void main() {
-                vPosition = (cameraMatrix * modelViewMatrix * vec4( position, 1.0 )).xyz;
-                vNormal = normal;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-            }
-        </script>
-        <script id="flat-vertex-shader" type="x-shader/x-vertex">
-            varying vec2 vUv;
-
-            void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-            }
-        </script>
-        <script data-src="shaders/ssao.glsl" data-name="ssao" type="x-shader/x-fragment"></script>
-        <script data-src="shaders/compose.glsl" data-name="compose" type="x-shader/x-fragment"></script>
-        <script data-src="shaders/blur.glsl" data-name="blur" type="x-shader/x-fragment"></script>
-        <script data-src="shaders/downsample2d.glsl" data-name="downsample2d" type="x-shader/x-fragment"></script>
-
-        <script src="js-libs/jquery-2.1.4.min.js"></script>
-        <script src="js-libs/three.min.js"></script>
-        <script src="js-libs/OrbitControls.js"></script>
-        <script src="js-libs/Detector.js"></script>
-        <script src="js-libs/ShaderLoader.min.js"></script>
-        <script src="js-libs/stats.min.js"></script>
-        <script src="js-libs/parseQueryString.js"></script>
-
-        <script src="build/game.js"></script>
-        <script src="game-cpp.js"></script>
-        <script src="controls.js"></script>
-        <script src="controller.js"></script>
-        <script src="main.js"></script>
-    </body>
+void main() {
+vUv = uv;
+gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+</script>
+<script data-src="shaders/ssao.glsl" data-name="ssao" type="x-shader/x-fragment"></script>
+<script data-src="shaders/compose.glsl" data-name="compose" type="x-shader/x-fragment"></script>
+<script data-src="shaders/blur.glsl" data-name="blur" type="x-shader/x-fragment"></script>
+<script data-src="shaders/downsample2d.glsl" data-name="downsample2d" type="x-shader/x-fragment"></script>
+<script src="js-libs/jquery-2.1.4.min.js"></script>
+<script src="js-libs/three.min.js"></script>
+<script src="js-libs/OrbitControls.js"></script>
+<script src="js-libs/Detector.js"></script>
+<script src="js-libs/ShaderLoader.min.js"></script>
+<script src="js-libs/stats.min.js"></script>
+<script src="js-libs/parseQueryString.js"></script>
+<script src="build/game.js"></script>
+<script src="game-cpp.js"></script>
+<script src="controls.js"></script>
+<script src="controller.js"></script>
+<script src="main.js"></script>
+</body>
 </html>

@@ -1,4 +1,4 @@
-EMCC_PATH=~/opt/emsdk/emsdk_env.sh
+EMCC_PATH=~/emsdk/emsdk_env.sh
 
 .PHONY: browser
 browser:
@@ -6,3 +6,4 @@ browser:
 	rm -rf browser/build/*
 	mkdir -p browser/build
 	cp cpp/bin/js/game.js browser/build/game.js
+	cp cpp/bin/js/game.wasm browser/build/game.wasm

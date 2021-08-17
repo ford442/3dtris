@@ -18,7 +18,6 @@
 
 #ifndef C_MAIN_APPLICATION_H_
 #define C_MAIN_APPLICATION_H_
-
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <android/asset_manager.h>
@@ -27,7 +26,6 @@
 #include <set>
 #include <string>
 #include <unordered_map>
-
 #include "arcore_c_api.h"
 #include "background_renderer.h"
 #include "glm.h"
@@ -37,94 +35,75 @@
 #include "debug_renderer.h"
 #include "util.h"
 #include "game_controller.h"
-
 // MainApplication handles all application logics.
-class MainApplication {
+class MainApplication{
 public:
-  // Constructor and deconstructor.
-  MainApplication() = default;
-  MainApplication(AAssetManager* asset_manager);
-  ~MainApplication();
-
-  // OnPause is called on the UI thread from the Activity's onPause method.
-  void OnPause();
-
-  // OnResume is called on the UI thread from the Activity's onResume method.
-  void OnResume(void* env, void* context, void* activity);
-
-  // OnSurfaceCreated is called on the OpenGL thread when GLSurfaceView
-  // is created.
-  void OnSurfaceCreated();
-
-  // OnDisplayGeometryChanged is called on the OpenGL thread when the
-  // render surface size or display rotation changes.
-  //
-  // @param display_rotation: current display rotation.
-  // @param width: width of the changed surface view.
-  // @param height: height of the changed surface view.
-  void OnDisplayGeometryChanged(int display_rotation, int width, int height);
-
-  // OnDrawFrame is called on the OpenGL thread to render the next frame.
-  // returns true if game state has changed since the last frame
-  bool OnDrawFrame();
-
-  // OnTap is called on the OpenGL thread after the user touches the screen.
-  // @param x: x position on the screen (pixels).
-  // @param y: y position on the screen (pixels).
-  void OnTap(float x, float y);
-
-  void OnTouchUp(float x, float y);
-
-  void OnScroll(float x1, float y1, float x2, float y2, float dx, float dy);
-
-  // Returns true if any planes have been detected.  Used for hiding the
-  // "searching for planes" snackbar.
-  bool IsTracking() const {
-    return game_controller_.getTrackingState();
-  }
-  bool HasGameStarted() const {
-    return game_controller_.hasStarted();
-  }
-  bool IsGameOver() const {
-    return game_controller_.getGame().isOver();
-  }
-  void RestartGame() {
-    game_controller_.restart();
-  }
-  int GetScore() const {
-    return game_controller_.getGame().getScore();
-  }
-
-  int GetArCoreInstallError() const {
-    return ar_core_install_error_;
-  }
-
+// Constructor and deconstructor.
+MainApplication() = default;
+MainApplication(AAssetManager *asset_manager);
+~MainApplication();
+// OnPause is called on the UI thread from the Activity's onPause method.
+void OnPause();
+// OnResume is called on the UI thread from the Activity's onResume method.
+void OnResume(void *env,void *context,void *activity);
+// OnSurfaceCreated is called on the OpenGL thread when GLSurfaceView
+// is created.
+void OnSurfaceCreated();
+// OnDisplayGeometryChanged is called on the OpenGL thread when the
+// render surface size or display rotation changes.
+//
+// @param display_rotation: current display rotation.
+// @param width: width of the changed surface view.
+// @param height: height of the changed surface view.
+void OnDisplayGeometryChanged(int display_rotation,int width,int height);
+// OnDrawFrame is called on the OpenGL thread to render the next frame.
+// returns true if game state has changed since the last frame
+bool OnDrawFrame();
+// OnTap is called on the OpenGL thread after the user touches the screen.
+// @param x: x position on the screen (pixels).
+// @param y: y position on the screen (pixels).
+void OnTap(float x,float y);
+void OnTouchUp(float x,float y);
+void OnScroll(float x1,float y1,float x2,float y2,float dx,float dy);
+// Returns true if any planes have been detected.  Used for hiding the
+// "searching for planes" snackbar.
+bool IsTracking() const{
+return game_controller_.getTrackingState();
+}
+bool HasGameStarted() const{
+return game_controller_.hasStarted();
+}
+bool IsGameOver() const{
+return game_controller_.getGame().isOver();
+}
+void RestartGame(){
+game_controller_.restart();
+}
+int GetScore() const{
+return game_controller_.getGame().getScore();
+}
+int GetArCoreInstallError() const{
+return ar_core_install_error_;
+}
 private:
-  ArSession* ar_session_ = nullptr;
-  ArFrame* ar_frame_ = nullptr;
-
-  bool install_requested_ = false;
-  bool is_tracking_ok_ = false;
-  int width_ = 1;
-  int height_ = 1;
-  int display_rotation_ = 0;
-  int ar_core_install_error_ = 0;
-
-  AAssetManager* const asset_manager_;
-
-  // The anchors at which we are drawing android models
-  std::vector<ArAnchor*> tracked_obj_set_;
-
-  GameController game_controller_;
-
-  BackgroundRenderer background_renderer_;
-  GameBoxRenderer game_box_renderer_;
-  GameRenderer game_renderer_;
-  ControlRenderer control_renderer_;
-  DebugRenderer debug_renderer_;
-
-  glm::mat4x4 game_model_mat_;
-  float game_scale_;
+ArSession *ar_session_=nullptr;
+ArFrame *ar_frame_=nullptr;
+bool install_requested_=false;
+bool is_tracking_ok_=false;
+int width_=1;
+int height_=1;
+int display_rotation_=0;
+int ar_core_install_error_=0;
+AAssetManager *const asset_manager_;
+// The anchors at which we are drawing android models
+std::vector<ArAnchor *> tracked_obj_set_;
+GameController game_controller_;
+BackgroundRenderer background_renderer_;
+GameBoxRenderer game_box_renderer_;
+GameRenderer game_renderer_;
+ControlRenderer control_renderer_;
+DebugRenderer debug_renderer_;
+glm::mat4x4 game_model_mat_;
+float game_scale_;
 };
-
 #endif

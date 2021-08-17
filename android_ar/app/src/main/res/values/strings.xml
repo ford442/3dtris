@@ -17,5 +17,5 @@
    Modifications copyright (C) Otto Seiskari 2018
 -->
 <resources>
-  <string name="app_name">3dtris</string>
+    <string name="app_name">3dtris</string>
 </resources>

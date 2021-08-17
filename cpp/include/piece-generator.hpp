@@ -1,22 +1,18 @@
 #ifndef __PIECE_GENERATOR_HPP__
 #define __PIECE_GENERATOR_HPP__
-
 #include "piece.hpp"
 #include "game-box.hpp"
 #include <vector>
 #include <random>
-
-class PieceGenerator {
+class PieceGenerator{
 private:
-    std::mt19937 random;
-    const GameBox& gameBox;
-    int pieceId;
-    std::vector< std::vector<Pos3d> > prototypes;
-
-    Piece randomTransformation(const Piece& original);
+std::mt19937 random;
+const GameBox &gameBox;
+int pieceId;
+std::vector <std::vector<Pos3d>> prototypes;
+Piece randomTransformation(const Piece &original);
 public:
-    PieceGenerator(const GameBox &gameBox, int randomSeed);
-    Piece nextPiece();
+PieceGenerator(const GameBox &gameBox,int randomSeed);
+Piece nextPiece();
 };
-
 #endif
