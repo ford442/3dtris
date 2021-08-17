@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3 -s ENVIRONMENT=web -s INITIAL_MEMORY=700mb -s ALLOW_MEMORY_GROWTH=0 -s FORCE_FILESYSTEM=1 -DNDEBUG -s ASSERTIONS=0 -s SUPPORT_LONGJMP=0 -fno-rtti -fno-exceptions -flto --closure 1 -g0 -s USES_DYNAMIC_ALLOC=0 
+CFLAGS=-Wall -Werror -pedantic -Iinclude -std=c++11 -O3  -s FILESYSTEM=0 -DNDEBUG -s ASSERTIONS=0 -s SUPPORT_LONGJMP=0 -fno-rtti -fno-exceptions -flto --closure 1 -g0 -s USES_DYNAMIC_ALLOC=0 
 
 _OBJ = game.o piece.o cemented-block-array.o game-box.o piece-generator.o
 OBJ = $(patsubst %,obj/%,$(_OBJ))
